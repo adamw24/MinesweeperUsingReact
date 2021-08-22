@@ -45,14 +45,6 @@ function calculateMove(size, squares, index){
 }
 
 
-function Square(props) {
-  return (
-  <button className="square" onClick={props.onClick} onContextMenu={props.onContextMenu}> 
-      {props.value}
-  </button>
-  );
-}
-
 function distributeMines(size, num){
   var mineLocations = new Set();
   var grid =  Array(size*size);
@@ -65,8 +57,18 @@ function distributeMines(size, num){
       grid[loc] = 'X';
     }
   }
-  return grid
+  return grid;
 }
+
+
+function Square(props) {
+  return (
+  <button className="square" onClick={props.onClick} onContextMenu={props.onContextMenu}> 
+      {props.value}
+  </button>
+  );
+}
+
 
 class Board extends React.Component {
   constructor(props){
@@ -154,6 +156,12 @@ class Board extends React.Component {
     this.setState({board:board});
   }
 
+  switchGameMode(size, mines, title){
+    const grid = distributeMines(size,mines); 
+    this.setState({title: title, lost:false, size:size, minesLeft:mines, mineLocations:grid, board:Array(size*size)})
+
+  }
+
   render() {
     const board = this.state.board.slice();
     const size = this.state.size;
@@ -187,26 +195,13 @@ class Board extends React.Component {
 
       <p>Directions: The numbers on each square represent how many mines are adjacent to that square, including diagonals. Right click (Mouse2) to place an "M" where you think a mine is. Good Luck!</p>
       <DropdownButton class="dropdown-menu" id="dropdown-basic-button" title="Choose Difficulty">
-        <Dropdown.Item as="button" class="dropdown-item" onClick={() => { 
-            let size = 3, mines = 1;
-            grid = distributeMines(size,mines); 
-            this.setState({title: "Super Small", lost:false, size:size, minesLeft:mines, mineLocations:grid, board:Array(size*size)})}}>Super Small (3x3, 1 mine)</Dropdown.Item>
-        <Dropdown.Item as="button" class="dropdown-item" onClick={() => { 
-          let size = 10, mines = 10;
-          grid = distributeMines(size,mines); 
-          this.setState({title: "Small", lost:false, size:size, minesLeft:mines, mineLocations:grid, board:Array(size*size)})}}>Small (10x10; 10 mines)</Dropdown.Item>
-        <Dropdown.Item as="button" class="dropdown-item" onClick={() => { 
-          let size = 20, mines = 75;
-          grid = distributeMines(size,mines); 
-          this.setState({title: "Medium", lost:false, size:size, minesLeft:mines, mineLocations:grid, board:Array(size*size)})}}>Medium (20x20; 75mines)</Dropdown.Item>
-        <Dropdown.Item as="button" class="dropdown-item" onClick={() => { 
-          let size = 40, mines = 300;
-          grid = distributeMines(size,mines); 
-          this.setState({title: "Large", lost:false, size:size, minesLeft:mines, mineLocations:grid, board:Array(size*size)})}}>Large (40x40; 300 mines)</Dropdown.Item>
-        <Dropdown.Item as="button" class="dropdown-item" onClick={() => { 
-          var size = 15, mines = size*size-1;
-          grid = distributeMines(size,mines); 
-          this.setState({title: "Troll", lost:false, size:size, minesLeft:mines, mineLocations:grid, board:Array(size*size)})}}>Troll (all mines except 1)</Dropdown.Item>
+        <Dropdown.Item as="button" class="dropdown-item" onClick={() => {this.switchGameMode(3,1, "Super Small")}}>Super Small (3x3, 1 mine)</Dropdown.Item>
+        <Dropdown.Item as="button" class="dropdown-item" onClick={() => {this.switchGameMode(10, 10, "Small")}}>Small (10x10; 10 mines)</Dropdown.Item>
+        <Dropdown.Item as="button" class="dropdown-item" onClick={() => {this.switchGameMode(20, 75, "Medium")}}>Medium (20x20; 75 mines)</Dropdown.Item>
+        <Dropdown.Item as="button" class="dropdown-item" onClick={() => {this.switchGameMode(40, 300, "Large")}}>Large (40x40; 300 mines)</Dropdown.Item>
+        <Dropdown.Item as="button" class="dropdown-item" onClick={() => {this.switchGameMode(15, 224, "Troll")}}>Troll (all mines except 1)</Dropdown.Item>
+        <Dropdown.Item as="button" class="dropdown-item" onClick={() => {let size = parseInt(Math.random()*30); 
+          this.switchGameMode(size, parseInt(Math.random()*(size*size/2)), "Random")}}>Random (random size, # mines)</Dropdown.Item>
       </DropdownButton>
       <div>Difficulty: {this.state.title}</div>
       <div>{minesLeft}</div>
