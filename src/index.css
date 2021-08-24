@@ -8,6 +8,7 @@ body {
 
 button {
   border: 0px;
+  font-size: 17px;
 }
 
 ul {
@@ -45,6 +46,7 @@ ul {
     line-height: 1rem;
     height: 1rem;
     width: 1rem;
+    font-size: 15px;
   }
 }
 
